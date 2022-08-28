@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('exchange_rates_models', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('currency_id');
-            $table->unsignedBigInteger('buy');
-            $table->unsignedBigInteger('sale');
+            $table->double('buy');
+            $table->double('sale');
             $table->timestamps();
         });
     }

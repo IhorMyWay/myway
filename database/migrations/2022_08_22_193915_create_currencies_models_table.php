@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('currencies_models', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('title');
             $table->unsignedBigInteger('bank_id');
             $table->timestamps();
         });

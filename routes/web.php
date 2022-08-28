@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/test', 'App\Http\Controllers\TestController@index');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+Route::get('/', 'App\Http\Controllers\IndexController@index')->name('index');
+Route::get('/bank/{name}/{period}', 'App\Http\Controllers\IndexController@courses')->name('bank.courses');

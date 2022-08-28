@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CurrenciesModel extends Model
 {
     use HasFactory;
+
     protected $guarded = false;
+
+    public $timestamps = false;
 
     public function exchangeRates(): HasMany
     {

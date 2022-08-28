@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface DataActionsType
+interface ApiDataActionInterface
 {
     public function getDataAction();
 }

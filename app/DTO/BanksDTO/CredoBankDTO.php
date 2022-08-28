@@ -1,17 +1,13 @@
 <?php
 
-namespace App\DTO\Banks;
+namespace App\DTO\BanksDTO;
 
 use App\Interfaces\BanksInterface;
 
-class CredoBank implements BanksInterface
+class CredoBankDTO implements BanksInterface
 {
     public function getBankName(): string
     {
         return 'CredoBank';
-    }
-
-    public function getDataActionType(): string
-    {
     }
 }

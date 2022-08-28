@@ -12,6 +12,8 @@ class BanksModel extends Model
 
     protected $guarded = false;
 
+    public $timestamps = false;
+
     public function currencies(): HasMany
     {
         return $this->hasMany(CurrenciesModel::class, 'bank_id', 'id');

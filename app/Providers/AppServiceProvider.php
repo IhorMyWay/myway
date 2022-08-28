@@ -2,16 +2,14 @@
 
 namespace App\Providers;
 
-use App\DTO\Banks\CredoBank;
-use App\DTO\Banks\MonoBank;
-use App\DTO\Banks\PrivateBank;
-use App\DTO\DataActionsDTO\CredoBankDTO;
-use App\DTO\DataActionsDTO\MonoBankActionDTO;
-use App\DTO\DataActionsDTO\PrivateBankActionDTO;
-use App\Http\Controllers\TestController;
+use App\DTO\BanksDTO\CredoBankDTO;
+use App\DTO\BanksDTO\MonoBankDTO;
+use App\DTO\BanksDTO\PrivateBankDTO;
 use App\Jobs\ExchangerRateJob;
+use App\Services\BanksApiService\CredoBankApiService;
+use App\Services\BanksApiService\MonoBankApiService;
+use App\Services\BanksApiService\PrivateBankApiService;
 use Illuminate\Support\ServiceProvider;
-use phpDocumentor\Reflection\Types\Collection;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,23 +20,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('MonoBankDTO', function () {
-            return ['MonoBank' => new MonoBankActionDTO()];
+        $this->app->bind('MonoBankApiService', function () {
+            return ['MonoBank' => new MonoBankApiService()];
         });
 
-        $this->app->bind('PrivateBankDTO', function () {
-            return ['PrivateBank' => new PrivateBankActionDTO()];
+        $this->app->bind('PrivateBankApiService', function () {
+            return ['PrivateBank' => new PrivateBankApiService()];
         });
 
-        $this->app->bind('CredoBankDTO', function () {
-            return ['CredoBank' => new CredoBankDTO()];
+        $this->app->bind('CredoBankApiService', function () {
+            return ['CredoBank' => new CredoBankApiService()];
         });
 
-        $this->app->tag([MonoBank::class, PrivateBank::class, CredoBank::class], 'Banks');
-        $this->app->tag(['MonoBankDTO', 'PrivateBankDTO', 'CredoBankDTO'], 'DTO');
+        $this->app->tag([MonoBankDTO::class, PrivateBankDTO::class, CredoBankDTO::class], 'BanksDTO');
+        $this->app->tag(['MonoBankApiService', 'PrivateBankApiService', 'CredoBankApiService'], 'ApiService');
         $this->app->bindMethod([ExchangerRateJob::class, 'handle'], function ($job, $app) {
-            return $job->handle($app->tagged('Banks'), $this->tagsToArrayWithKeys('DTO'));
+            return $job->handle($app->tagged('BanksDTO'), $this->tagsToArrayWithKeys());
         });
+
     }
 
     /**
@@ -54,11 +53,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @return \Illuminate\Support\Collection
      */
-    private function tagsToArrayWithKeys(string $tag): \Illuminate\Support\Collection
+    private function tagsToArrayWithKeys(): \Illuminate\Support\Collection
     {
         $tagsWithKeys = [];
 
-        foreach (app()->tagged($tag) as $tags) {
+        foreach (app()->tagged('ApiService') as $tags) {
             foreach ($tags as $key => $tag) {
                 $tagsWithKeys[$key] = $tag;
             }

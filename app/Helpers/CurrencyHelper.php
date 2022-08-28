@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Repository\ExchangeRatesRepository;
+use Carbon\Carbon;
+
 class CurrencyHelper
 {
     public static function getCurrencyNameByCode(string $code)
@@ -27,7 +30,6 @@ class CurrencyHelper
 
     public static function handleData(array $data): array
     {
-        dump($data);
         foreach ($data as $key => $course)
         {
             if (key_exists('ccy', $course)) {
@@ -54,7 +56,40 @@ class CurrencyHelper
 
         }
 
-
         return $data;
+    }
+
+    public static function addKeyToFields(array $fields): array
+    {
+        $combined = [];
+        $keys = [
+            'name',
+            'sale',
+            'buy'
+        ];
+
+        foreach (array_chunk($fields, 3) as $field)
+        {
+            $combined[] = array_combine($keys, $field);
+        }
+
+        return $combined;
+    }
+
+    public static function handleHistoryPeriod(string $period): array
+    {
+        $dateFrom = [];
+
+        if ($period == ExchangeRatesRepository::WEEK_PERIOD) {
+            $dateFrom['from'] = Carbon::today()->startOfWeek()->format('d-m-Y');
+            $dateFrom['to'] = Carbon::today()->endOfWeek()->format('d-m-Y');
+        }
+
+        if ($period == ExchangeRatesRepository::MONTH_PERIOD) {
+            $dateFrom['from'] = Carbon::today()->startOfMonth()->format('d-m-Y');
+            $dateFrom['to'] = Carbon::today()->endOfMonth()->format('d-m-Y');
+        }
+
+        return $dateFrom;
     }
 }

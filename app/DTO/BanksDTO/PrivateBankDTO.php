@@ -1,17 +1,13 @@
 <?php
 
-namespace App\DTO\Banks;
+namespace App\DTO\BanksDTO;
 
 use App\Interfaces\BanksInterface;
 
-class PrivateBank implements BanksInterface
+class PrivateBankDTO implements BanksInterface
 {
     public function getBankName(): string
     {
         return 'PrivateBank';
-    }
-
-    public function getDataActionType(): string
-    {
     }
 }
