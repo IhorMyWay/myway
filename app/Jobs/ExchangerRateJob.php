@@ -17,6 +17,7 @@ class ExchangerRateJob implements ShouldQueue
 
     public function handle($banksDTO, $apiServices)
     {
+
         foreach ($banksDTO as $bank) {
             $bankModel = BanksModel::firstOrCreate([
                 'name' => $bank->getBankName(),
@@ -31,13 +32,15 @@ class ExchangerRateJob implements ShouldQueue
                         ]
                     );
 
-                    ExchangeRatesModel::create(
-                        [
-                            'buy' => (float)$course['buy'],
-                            'sale' => (float)$course['sale'],
-                            'currency_id' => $currencyModel->id,
-                        ]
-                    );
+                    if (key_exists('buy', $course) && key_exists('sale', $course)) {
+                        ExchangeRatesModel::create(
+                            [
+                                'buy' => $course['buy'],
+                                'sale' => $course['sale'],
+                                'currency_id' => $currencyModel->id,
+                            ]
+                        );
+                    }
                 }
             }
         }

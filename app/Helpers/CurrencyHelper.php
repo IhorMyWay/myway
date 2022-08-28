@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Enum\ExchangeRatesNameWithCodeEnum;
 use App\Repository\ExchangeRatesRepository;
 use Carbon\Carbon;
 
@@ -9,23 +10,11 @@ class CurrencyHelper
 {
     public static function getCurrencyNameByCode(string $code)
     {
-        if (!key_exists($code, self::currencyCodes())) {
+        if (!key_exists($code, ExchangeRatesNameWithCodeEnum::toArray())) {
             return;
         }
 
-        return self::currencyCodes()[$code];
-    }
-
-    private static function currencyCodes(): array
-    {
-        return [
-            '840' => 'USD',
-            '978' => 'EUR',
-            '826' => 'GBP',
-            '392' => 'JPY',
-            '756' => 'CHF',
-            '156' => 'CNY',
-        ];
+        return ExchangeRatesNameWithCodeEnum::toArray()[$code];
     }
 
     public static function handleData(array $data): array
@@ -59,18 +48,19 @@ class CurrencyHelper
         return $data;
     }
 
-    public static function addKeyToFields(array $fields): array
+    public static function addKeyNamesToFields(array $courses): array
     {
         $combined = [];
-        $keys = [
+
+        $keyNames = [
             'name',
             'sale',
             'buy'
         ];
 
-        foreach (array_chunk($fields, 3) as $field)
+        foreach (array_chunk($courses, 3) as $course)
         {
-            $combined[] = array_combine($keys, $field);
+            $combined[] = array_combine($keyNames, $course);
         }
 
         return $combined;
@@ -78,18 +68,18 @@ class CurrencyHelper
 
     public static function handleHistoryPeriod(string $period): array
     {
-        $dateFrom = [];
+        $dateFromAndTo = [];
 
         if ($period == ExchangeRatesRepository::WEEK_PERIOD) {
-            $dateFrom['from'] = Carbon::today()->startOfWeek()->format('d-m-Y');
-            $dateFrom['to'] = Carbon::today()->endOfWeek()->format('d-m-Y');
+            $dateFromAndTo['from'] = Carbon::today()->startOfWeek()->format('d-m-Y');
+            $dateFromAndTo['to'] = Carbon::today()->endOfWeek()->format('d-m-Y');
         }
 
         if ($period == ExchangeRatesRepository::MONTH_PERIOD) {
-            $dateFrom['from'] = Carbon::today()->startOfMonth()->format('d-m-Y');
-            $dateFrom['to'] = Carbon::today()->endOfMonth()->format('d-m-Y');
+            $dateFromAndTo['from'] = Carbon::today()->startOfMonth()->format('d-m-Y');
+            $dateFromAndTo['to'] = Carbon::today()->endOfMonth()->format('d-m-Y');
         }
 
-        return $dateFrom;
+        return $dateFromAndTo;
     }
 }

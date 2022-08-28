@@ -25,6 +25,6 @@ class CredoBankApiService implements ApiDataActionInterface
             $this->courses[] = $field->filter('td')->eq(3)->text();
         });
 
-        return CurrencyHelper::addKeyToFields($this->courses);
+        return CurrencyHelper::addKeyNamesToFields($this->courses);
     }
 }
